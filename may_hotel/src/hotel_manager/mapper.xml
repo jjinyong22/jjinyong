@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hotelmapper">
+	<select id="selectReservationInfo" parameterType="HashMap" resultType="hotel_manager.ReservationInfo">
+		select * from reservation_info
+		<where >
+			<if test="res_id != null">and res_id = #{res_id}</if>
+			<if test="res_room != null">and res_room = #{res_room}</if>
+			<if test="res_checkin != null">and res_checkin = #{res_checkin}</if>
+			<if test="res_checkout != null">and res_checkout = #{res_checkout}</if>
+			<if test="res_state != null">and res_state = #{res_state}</if>
+		</where>
+	</select>
+	<select id="selectReservationInfoByCus" parameterType="String" resultType="hotel_manager.ReservationInfo">
+		select * from reservation_info where res_id = #{res_id} and res_state = '예약완료'
+	</select>
+	<select id="selectReservationInfo_resState_resOK" parameterType = "String" resultType="Integer">
+		select count(decode(res_state,'예약완료','1')) from reservation_info where res_date = #{res_date} 
+	</select>
+	<select id="selectReservationInfo_resState_checkIn" parameterType = "String" resultType = "Integer">
+		select count(decode(res_state,'체크인','1')) from reservation_info where res_checkin = #{res_checkin}
+	</select>
+	<select id="selectReservationInfo_resState_checkOut" parameterType = "String" resultType = "Integer">
+		select count(decode(res_state,'체크아웃','1')) from reservation_info where res_checkout = #{res_checkout}
+	</select>
+	<select id="selectReservationInfo_resState_cancel" parameterType = "String" resultType = "Integer">
+		select count(decode(res_state,'예약취소','1')) from reservation_info where res_cancel = #{res_cancel}
+	</select>
+	<update id = "updateReservationInfoByresNum" parameterType = "hotel_manager.ReservationInfo">
+		update reservation_info set res_num = #{res_num}, res_room = #{res_room}, res_date = #{res_date}, res_checkin = #{res_checkin},
+		res_checkout = #{res_checkout}, res_breakfast = #{res_breakfast}, res_payment = #{res_payment}, res_head = #{res_head}, res_state = #{res_state},
+		res_cancel = null where res_num = #{res_num}
+	</update>
+	<select id="selectCusID" parameterType="String" resultType="String">
+		select cus_id from customer_info where cus_id = #{cus_id}
+	</select>
+	<select id="selectMaxResNum" resultType="Integer">
+		select max(res_num) from reservation_info
+	</select>
+	<insert id="insertIntoReservationInfo" parameterType="hotel_manager.ReservationInfo">
+		insert into reservation_info values(#{res_num},#{res_id},#{res_room},#{res_date},null,#{res_checkin},#{res_checkout},#{res_breakfast},#{res_payment},#{res_head},#{res_state})
+	</insert>
+	<update id="updateReservationInfoResCancel" parameterType="hotel_manager.ReservationInfo">
+		update reservation_info set res_state = '예약취소', res_cancel = #{res_cancel} where res_num = #{res_num}
+	</update>
+	<select id="selectCustomerInfo" resultType="hotel_manager.CustomerInfo">
+		select * from customer_info 
+	</select>
+	<select id="selectCustomerInfoByCusID" resultType = "hotel_manager.CustomerInfo" parameterType = "String">
+		select * from customer_info where cus_id = #{cus_id}
+	</select>
+	<select id="selectCustomerInfoByCusEmail" resultType = "hotel_manager.CustomerInfo" parameterType = "String">
+		select * from customer_info where cus_email = #{cus_email}
+	</select>
+	<delete id="deleteCustomerInfoByCusId" parameterType="String">
+		delete from customer_info where cus_id = #{cus_id}
+	</delete>
+	<select id="selectEventInfoByDate" resultType="hotel_manager.EventInfo" parameterType = "String">
+		select * from event_info where event_begin like '%'||#{event_begin}||'%'
+	</select>
+	<select id="selectMaxEventNum" resultType="Integer">
+		select max(event_id) from event_info
+	</select>
+	<insert id="insertIntoEventInfo" parameterType="hotel_manager.EventInfo">
+		insert into event_info values (#{event_id},#{event_name},#{event_info},#{event_begin},#{event_close},#{event_image})
+	</insert>
+	<update id="updateEventInfo" parameterType="hotel_manager.EventInfo">
+		update event_info set event_name = #{event_name}, event_info = #{event_info}, event_begin = #{event_begin}, event_close = #{event_close}, event_image = #{event_image} where event_id = #{event_id} 
+	</update>
+	<delete id="deleteEventInfoByEventId" parameterType = "Integer">
+		delete from event_info where event_id = #{event_id}
+	</delete>
+	<select id="selectRoomInfoByRoomType" resultType = "hotel_manager.RoomInfo" parameterType = "String">
+		select * from room_info where room_type = #{room_type}
+	</select>
+	<select id="selectRoomInfoByRoomId" resultType = "hotel_manager.RoomInfo" parameterType="hotel_manager.RoomInfo2">
+		select room_id from room_info where room_type = #{room_type} and room_id = #{room_id}
+	</select>
+	<insert id="insertIntoRoomInfo" parameterType = "hotel_manager.RoomInfo">
+		insert into room_info values (#{room_id},#{room_type},#{room_price},#{room_check},#{room_head},#{room_image})
+	</insert>
+	<update id="updateRoomInfo" parameterType="hotel_manager.RoomInfo">
+		update room_info set room_type = #{room_type}, room_price = #{room_price}, room_check = #{room_check}, room_head = #{room_head}, room_image = #{room_image} where room_id = #{room_id}
+	</update>
+	<delete id="deleteRoomInfoByRoomId" parameterType="Integer">
+		delete from room_info where room_id = #{room_id}
+	</delete>
+	<select id = "selectmanager_con" parameterType = "HashMap" resultType = "hotel_manager.EmployeeInfo">
+	select * from manager_info
+	<where>
+	<if test = "man_id != null">and man_id = #{man_id}</if>
+	<if test = "man_name != null">and man_name = #{man_name}</if>
+	<if test = "man_dept != null">and man_dept = #{man_dept}</if>
+	</where>
+	</select>
+	<select id="selectmanager_in" parameterType = "String"
+		resultType = "hotel_manager.EmployeeInfo">
+		select * from manager_info
+		where man_id = #{man_id}
+	</select>
+	<delete id="deletemanager" parameterType = "String">
+		delete from manager_info where man_id = #{id}
+	</delete>
+	<insert id="insertmanager" parameterType ="hotel_manager.EmployeeInfo">
+	insert into manager_info values (#{man_id},#{man_pw},#{man_name},
+		#{man_hiredate},#{man_phone},#{man_dept})
+	</insert>	
+	<update id="updatemanager" parameterType ="hotel_manager.EmployeeInfo">
+		update manager_info set man_id = #{man_id},man_pw = #{man_pw},man_name = #{man_name},
+		man_hiredate = #{man_hiredate},man_phone = #{man_phone},man_dept = #{man_dept}
+		where man_id = #{man_id}
+	</update>
+	<select id="selectmanager"
+		resultType = "hotel_manager.EmployeeInfo">
+		select * from manager_info
+	</select>
+</mapper>

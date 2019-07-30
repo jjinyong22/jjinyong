@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+"-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	<mapper namespace="hotelmapper">
+	<select id = "selectEventInfo" resultType = "hotel_customer.event_info">
+	select * from event_info
+	</select>
+	<update id = "updateCustomerInfo" parameterType = "hotel_customer.customer_info">
+	update Customer_info
+	set cus_pw = #{cus_pw}, cus_gen = #{cus_gen}, cus_phone = #{cus_phone}, cus_email = #{cus_email}
+	where cus_id = #{cus_id}
+	</update>
+	<select id = "selectCustomerInfo" parameterType = "String" resultType = "hotel_customer.customer_info">
+	select * from Customer_info where cus_id = #{id}
+	</select>
+	<insert id="insertCustomerInfo" parameterType = "hotel_customer.customer_info">
+	insert into Customer_info values (#{cus_id}, #{cus_pw}, #{cus_name}, #{cus_gen}, #{cus_joindate}, #{cus_phone}, #{cus_email})
+	</insert>
+	<select id="max_yoya" 
+	resultType="integer">
+		select res_num
+		 from reservation_info
+		where res_num = (select max(res_num) from reservation_info)
+	</select>
+	
+	<select id="selectyoya" parameterType="String"
+		resultType="hotel_customer.Yoya_batis">
+		select * from reservation_info
+	</select>
+	
+	<insert id="insertyoya" parameterType="hotel_customer.Yoya_batis">
+		insert into reservation_info values(#{res_num},#{res_id},#{res_room},#{res_date},#{res_checkin},
+		#{res_checkout},#{res_breakfast},#{res_payment},#{res_head},#{res_state},#{res_canceldate})
+	</insert>
+	
+	<update id="updateyoya" parameterType="hotel_customer.Yoya_batis">
+		update reservation_info set res_room = #{res_room},res_date = #{res_date},res_checkin = #{res_checkin},
+		res_checkout = #{res_checkout},res_breakfast = #{res_breakfast},
+		res_payment = #{res_payment},res_head = #{res_head}, res_state = #{res_state},
+		res_cancel = #{res_cancel}
+		where res_num = #{res_num} and res_id = #{res_id}
+	</update>
+	<select id="selectManIdAndPw" parameterType="hotel_customer.ManagerInfo" resultType="hotel_customer.ManagerInfo">
+		select * from manager_info where man_id = #{man_id} and man_pw = #{man_pw}
+	</select>
+	</mapper>
